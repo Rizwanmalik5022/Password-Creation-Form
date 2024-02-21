@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Password Creation Form</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+  }
+
+  #passwordForm {
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+  }
+
+  h2 {
+    margin-top: 0;
+    color: #333;
+  }
+
+  label {
+    font-weight: bold;
+    color: #333;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: calc(100% - 40px);
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 16px;
+  }
+
+  #toggleVisibility {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  input[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 20px;
+  }
+
+  input[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+
+  #statistics {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+  }
+
+  #errorMessage {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+    display: none;
+  }
+
+</style>
+</head>
+<body>
+
+<form id="passwordForm">
+  <h2>Registration</h2>
+  <label for="username">Username:</label><br>
+  <input type="text" id="username" name="username" required><br>
+  <label for="password">Password:</label><br>
+  <div style="position: relative;">
+    <input type="password" id="password" name="password" required>
+    <button type="button" id="toggleVisibility">&#128065;</button>
+  </div>
+  <input type="submit" value="Submit">
+</form>
+
+<div id="statistics">
+  <p>Total Submissions: <span id="submissionCount">0</span></p>
+  <p>Submission with Error: <span id="errorSubmissionCount">0</span></p>
+  <p>Submission without Error: <span id="validSubmissionCount">0</span></p>
+  <p>Eye Feature Usage: <span id="eyeFeatureCount">0</span></p>
+  <p>Time Taken: <span id="timeTaken">0</span> seconds</p>
+</div>
+
+<script>
+  let submissionCount = 0;
+  let errorSubmissionCount = 0;
+  let validSubmissionCount = 0;
+  let eyeFeatureCount = 0;
+  let formStartTime = null; // Initialize formStartTime to null
+  let isFormSubmitted = false;
+  let isTypingStarted = false; // Flag to track if typing has started
+
+  const passwordInput = document.getElementById('password');
+  const toggleVisibilityButton = document.getElementById('toggleVisibility');
+  const statisticsSection = document.getElementById('statistics');
+
+  toggleVisibilityButton.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+    toggleVisibilityButton.textContent = type === 'password' ? '\uD83D\uDD13' : '\uD83D\uDD0D';
+    eyeFeatureCount++;
+  });
+
+  passwordInput.addEventListener('input', () => {
+    if (!isTypingStarted) {
+      formStartTime = Date.now(); // Start timer when typing begins
+      isTypingStarted = true;
+    }
+  });
+
+  document.getElementById('passwordForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const password = passwordInput.value;
+    if (!isAllRequirementsFulfilled(password)) {
+      errorSubmissionCount++;
+    } else {
+      validSubmissionCount++;
+      if (!isFormSubmitted) {
+        isFormSubmitted = true;
+      } else {
+        // If the form has been submitted once before, open Variant B
+        window.location.href = "Variant%20B.html";
+      }
+    }
+    submissionCount++;
+    displayStatistics(); // Update statistics on each form submission
+  });
+
+  function isAllRequirementsFulfilled(password) {
+    return (
+      password.length >= 6 &&
+      /[A-Z]/.test(password) &&
+      /[a-z]/.test(password) &&
+      /\d/.test(password) &&
+      /[^A-Za-z0-9]/.test(password)
+    );
+  }
+
+  function displayStatistics() {
+    const timeTaken = calculateTimeTaken(); // Calculate time taken
+    statisticsSection.innerHTML = `
+      <p>Total Submissions: <span id="submissionCount">${submissionCount}</span></p>
+      <p>Submission with Error: <span id="errorSubmissionCount">${errorSubmissionCount}</span></p>
+      <p>Submission without Error: <span id="validSubmissionCount">${validSubmissionCount}</span></p>
+      <p>Eye Feature Usage: <span id="eyeFeatureCount">${eyeFeatureCount}</span></p>
+      <p>Time Taken: <span id="timeTaken">${timeTaken}</span> seconds</p>
+    `;
+  }
+
+  function calculateTimeTaken() {
+    if (formStartTime !== null && isFormSubmitted) {
+      return ((Date.now() - formStartTime) / 1000).toFixed(2);
+    } else {
+      return 0;
+    }
+  }
+</script>
+
+</body>
+</html>
